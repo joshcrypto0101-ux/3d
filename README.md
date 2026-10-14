@@ -8,3 +8,4 @@
 - `projects/01–04` — 4 个「显微镜热风焊接」解压视频（IP5306 / ADP150 / RP114N331 / TPS65131）：原始提示词、典型电路图、BOM 与镜头清单
 - `projects/05–06` — 2 个 Remotion 工程教学动画（贴片电阻 / 贴片电容）：原始提示词与实现拆分
 - `refs/datasheets/` — 4 份数据手册（来自表格附件）
+- `remotion-project/` — **共用的代码渲染工程**（Remotion + React Three Fiber），已含 03 RP114 LDO 样片；见其 README
