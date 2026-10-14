@@ -1,24 +1,34 @@
+import {useThree} from '@react-three/fiber';
+import {useEnvMap} from './Assets';
+
+/** HDRI image-based lighting + one warm key light for crisp shadows + a bench lamp. */
 export const Lights: React.FC<{warm?: number}> = ({warm = 0}) => {
+  const env = useEnvMap();
+  const scene = useThree((s) => s.scene);
+  // assigned during render so the very first advance() already sees it
+  scene.environment = env;
+  scene.environmentIntensity = 0.75;
   return (
     <>
-      <hemisphereLight args={['#dfe8ff', '#4a3a2a', 0.9]} />
       <directionalLight
-        position={[18, 32, 14]}
-        intensity={2.2}
-        color="#fff4e4"
+        position={[14, 30, 10]}
+        intensity={1.9}
+        color="#fff1dc"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-30}
-        shadow-camera-right={30}
-        shadow-camera-top={30}
-        shadow-camera-bottom={-30}
-        shadow-camera-near={1}
-        shadow-camera-far={120}
-        shadow-bias={-0.0004}
+        shadow-camera-left={-26}
+        shadow-camera-right={26}
+        shadow-camera-top={26}
+        shadow-camera-bottom={-26}
+        shadow-camera-near={5}
+        shadow-camera-far={90}
+        shadow-bias={-0.00025}
+        shadow-normalBias={0.02}
+        shadow-radius={4}
       />
-      <directionalLight position={[-20, 14, -10]} intensity={0.6} color="#bcd0ff" />
-      {warm > 0 ? <pointLight position={[0, 6, 0]} intensity={warm * 40} color="#ff9a3c" distance={30} /> : null}
+      <spotLight position={[-24, 26, 18]} angle={0.55} penumbra={0.8} intensity={320} color="#ffe4bf" distance={90} decay={2} />
+      {warm > 0 ? <pointLight position={[0, 5, 0]} intensity={warm * 60} color="#ff8a3c" distance={24} decay={2} /> : null}
     </>
   );
 };

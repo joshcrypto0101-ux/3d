@@ -1,28 +1,28 @@
 import {useCurrentFrame} from 'remotion';
+import {useMemo} from 'react';
 import type {PcbVideoData, PartData} from '../../lib/types';
 import type {Timeline, PlaceSlot} from '../../lib/timeline';
 import {s} from '../../lib/timeline';
-import {bump, easeInOut, easeOut, lerp, seg} from '../../lib/anim';
-import {Board, COLORS, PAD_Z, padsOf, toWorld} from './Board';
+import {easeInOut, easeOut, lerp, seg} from '../../lib/anim';
+import {Board, PAD_Z, padsOf, toWorld} from './Board';
 import {FOOTPRINTS} from './footprints';
 import {PartBody} from './Part';
 import {Brush, HotAir, Probe, Tweezers, Wire} from './Tools';
+import {PadSolder, PASTE_H, Smoke} from './Solder';
+import {Bench} from './Props';
 import {Lights} from '../../three/Lights';
-import {Env} from '../../three/Env';
-import {CameraRig, type CamKey} from '../../three/CameraRig';
-import {useMemo} from 'react';
-
-const PASTE_H = 0.12;
+import {CameraRig, useCameraFocus, type CamKey} from '../../three/CameraRig';
+import {Post} from '../../three/Post';
+import {useMaterials} from '../../three/Materials';
 
 /** Per-part animation state at a given frame. */
 interface PartState {
   visible: boolean;
-  /** world position of the part origin (resting height 0 = on pads) */
   pos: [number, number, number];
   rotY: number;
-  reflow: number; // 0 paste, 1 solder
-  heat: number; // 0..1 glow
-  held: boolean; // in the tweezers
+  reflow: number;
+  heat: number;
+  held: boolean;
 }
 
 const partState = (part: PartData, slot: PlaceSlot | undefined, frame: number): PartState => {
@@ -31,10 +31,9 @@ const partState = (part: PartData, slot: PlaceSlot | undefined, frame: number): 
   if (!slot || frame < slot.start) {
     return {visible: false, pos: [wx, 30, wz], rotY: baseRot, reflow: 0, heat: 0, held: false};
   }
-  // slight misplacement that the reflow corrects (self-centering)
-  const misX = 0.32;
-  const misZ = -0.18;
-  const misRot = 0.1;
+  const misX = 0.3;
+  const misZ = -0.16;
+  const misRot = 0.09;
   const reflow = easeInOut(seg(frame, slot.heat + s(0.15), slot.reflowed));
   const heat = Math.min(seg(frame, slot.heat, slot.heat + s(0.2)), 1 - seg(frame, slot.reflowed, slot.end));
   if (frame < slot.placed) {
@@ -42,7 +41,7 @@ const partState = (part: PartData, slot: PlaceSlot | undefined, frame: number): 
     const y = lerp(11, PASTE_H + PAD_Z, t);
     return {visible: true, pos: [wx + misX, y, wz + misZ], rotY: baseRot + misRot, reflow: 0, heat: 0, held: true};
   }
-  const settle = lerp(PASTE_H + PAD_Z, PAD_Z + 0.06, reflow);
+  const settle = lerp(PASTE_H + PAD_Z, PAD_Z + 0.03, reflow);
   return {
     visible: true,
     pos: [wx + misX * (1 - reflow), settle, wz + misZ * (1 - reflow)],
@@ -55,6 +54,7 @@ const partState = (part: PartData, slot: PlaceSlot | undefined, frame: number): 
 
 export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}> = ({data, tl, fov = 30}) => {
   const frame = useCurrentFrame();
+  const m = useMaterials();
   const st = tl.stages;
   const slotsByRef = useMemo(() => Object.fromEntries(tl.slots.map((sl) => [sl.ref, sl])), [tl]);
   const partsByRef = useMemo(() => Object.fromEntries(data.parts.map((p) => [p.ref, p])), [data]);
@@ -83,6 +83,7 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
     k.push({frame: st.end.end, pos: [12, 24, 25], target: [0, 0, 0]});
     return k;
   }, [st, tl.slots, partsByRef]);
+  const focus = useCameraFocus(keys, frame);
 
   // --- active tool state -----------------------------------------------------
   const activeSlot = tl.slots.find((sl) => frame >= sl.start && frame < sl.end);
@@ -91,15 +92,18 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
 
   let tweezers: React.ReactNode = null;
   let hotAir: React.ReactNode = null;
+  let smoke: React.ReactNode = null;
   let heatGlow = 0;
   if (activeSlot && activePart && activeState) {
     const fp = FOOTPRINTS[activePart.kind];
     const grip = activePart.rot % 180 !== 0 ? fp.body.w : fp.body.d;
     const open = easeOut(seg(frame, activeSlot.placed, activeSlot.placed + s(0.12)));
     const lift = easeInOut(seg(frame, activeSlot.placed + s(0.1), activeSlot.heat));
-    const tipY = activeState.pos[1] + fp.body.h * 0.6 + lift * 14;
-    const tipX = activeState.pos[0] + lift * 6;
-    const tipZ = activeState.pos[2] + lift * 4;
+    // tiny tremor while holding
+    const tremor = activeState.held ? 0.04 : 0;
+    const tipY = activeState.pos[1] + fp.body.h * 0.6 + lift * 14 + Math.sin(frame * 0.9) * tremor;
+    const tipX = activeState.pos[0] + lift * 6 + Math.sin(frame * 0.7 + 1) * tremor;
+    const tipZ = activeState.pos[2] + lift * 4 + Math.cos(frame * 0.8) * tremor;
     if (lift < 1) {
       tweezers = <Tweezers position={[tipX, tipY, tipZ]} open={open} grip={grip} yaw={activePart.rot % 180 !== 0 ? 0.6 + Math.PI / 2 : 0.6} />;
     }
@@ -116,6 +120,7 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
       ];
       heatGlow = activeState.heat;
       hotAir = <HotAir position={pos} heat={heatGlow} />;
+      smoke = <Smoke position={[wx, PAD_Z + 0.2, wz]} heat={heatGlow * (1 - outT)} frame={frame} seed={activeSlot.index} />;
     }
   }
 
@@ -130,24 +135,20 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
   const j1 = partsByRef.J1;
   const j2 = partsByRef.J2;
 
+  const bokeh = activeSlot ? 2.6 : frame >= st.power.start ? 2.0 : 1.4;
+
   return (
     <>
-      <color attach="background" args={['#0f1216']} />
-      <fog attach="fog" args={['#0f1216', 60, 140]} />
-      <Env />
+      <color attach="background" args={['#15171b']} />
+      <fog attach="fog" args={['#15171b', 70, 160]} />
       <Lights warm={heatGlow * 0.6} />
       <CameraRig keys={keys} fov={fov} />
+      <Post focus={[focus.x, focus.y, focus.z]} bokeh={bokeh} focusRange={activeSlot ? 2.2 : 5} />
 
-      {/* work mat */}
-      <mesh position={[0, -data.board.t - 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color="#2a2f35" roughness={0.95} />
-      </mesh>
-      <gridHelper args={[400, 80, '#3a4048', '#333940']} position={[0, -data.board.t, 0]} />
-
+      <Bench boardT={data.board.t} />
       <Board data={data} layoutProgress={layoutProgress} />
 
-      {/* paste / solder per pad */}
+      {/* paste -> solder per pad */}
       {data.parts.map((part, pi) => {
         const slot = slotsByRef[part.ref];
         const state = partState(part, slot, frame);
@@ -155,24 +156,27 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
         const n = data.parts.length;
         const appear = seg(pasteProgress, pi / n, (pi + 0.6) / n);
         if (appear <= 0) return null;
+        const [cx, cz] = toWorld(part.x, part.y);
+        const heating = slot && frame >= slot.heat && frame < slot.end ? state.heat : 0;
         return pads.map((p, i) => {
           const [px, pz] = toWorld(p.x, p.y);
-          const r = state.reflow;
-          const h = lerp(PASTE_H, 0.1, r);
-          const col = COLORS.paste;
-          const emissive = heatGlow > 0 && slot && frame >= slot.heat && frame < slot.end ? state.heat : 0;
-          const scale = lerp(0.82, 0.97, r) * easeOut(appear);
+          const dx = cx - px;
+          const dz = cz - pz;
+          const len = Math.hypot(dx, dz) || 1;
           return (
-            <mesh key={`${part.ref}-${i}`} position={[px, PAD_Z + h / 2, pz]} scale={[scale, 1, scale]} castShadow>
-              {p.r ? <cylinderGeometry args={[p.r * 0.95, p.r * 0.95, h, 20]} /> : <boxGeometry args={[p.w, h, p.h]} />}
-              <meshStandardMaterial
-                color={r > 0.5 ? COLORS.solder : col}
-                roughness={lerp(0.95, 0.22, r)}
-                metalness={lerp(0.25, 1, r)}
-                emissive="#ff6a1a"
-                emissiveIntensity={emissive * 0.9 * bump(r)}
-              />
-            </mesh>
+            <PadSolder
+              key={`${part.ref}-${i}`}
+              x={px}
+              z={pz}
+              w={p.w}
+              h={p.h}
+              r={p.r}
+              towardLeg={[dx / len, dz / len]}
+              reflow={state.reflow}
+              heat={heating}
+              appear={easeOut(appear)}
+              padZ={PAD_Z}
+            />
           );
         });
       })}
@@ -190,6 +194,7 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
 
       {tweezers}
       {hotAir}
+      {smoke}
 
       {/* flux residue + brush */}
       {frame >= st.place.start && frame < st.clean.end
@@ -199,13 +204,13 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
             const [wx, wz] = toWorld(part.x, part.y);
             const fp = FOOTPRINTS[part.kind];
             const cleared = seg(brushX - wx, -1.5, 1.5) * (cleanT > 0 ? 1 : 0);
-            const op = 0.35 * seg(frame, slot.heat, slot.reflowed) * (1 - cleared);
+            const op = 0.16 * seg(frame, slot.heat, slot.reflowed) * (1 - cleared);
             if (op <= 0.005) return null;
-            const rad = Math.max(fp.courtyard.w, fp.courtyard.d) * 0.7;
+            const rad = Math.max(fp.courtyard.w, fp.courtyard.d) * 0.5;
+            const mat = m.flux;
             return (
-              <mesh key={part.ref} position={[wx + 0.2, PAD_Z + 0.004, wz + 0.15]} rotation={[-Math.PI / 2, 0, 0]}>
-                <circleGeometry args={[rad, 24]} />
-                <meshBasicMaterial color="#6b4a1e" transparent opacity={op} depthWrite={false} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+              <mesh key={part.ref} position={[wx + 0.2, PAD_Z + 0.006, wz + 0.15]} rotation={[-Math.PI / 2, 0, 0]} material={mat} material-opacity={op}>
+                <circleGeometry args={[rad, 28]} />
               </mesh>
             );
           })
@@ -221,8 +226,8 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
             const sx = lerp(-40, x1, wireT);
             return (
               <>
-                <Wire from={[sx - 6, 2, z1 + 20]} to={[sx, 7.2, z1]} color="#d8322a" />
-                <Wire from={[sx - 6, 2, z2 + 22]} to={[lerp(-40, x2, wireT), 7.2, z2]} color="#17181b" />
+                <Wire from={[sx - 6, 2, z1 + 20]} to={[sx, 7.2, z1]} color="#c8281f" />
+                <Wire from={[sx - 6, 2, z2 + 22]} to={[lerp(-40, x2, wireT), 7.2, z2]} color="#141518" />
               </>
             );
           })()}
@@ -233,8 +238,8 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}
                 const dy = (1 - probeT) * 12;
                 return (
                   <>
-                    <Probe position={[x1, 7.3 + dy, z1]} color="#d8322a" />
-                    <Probe position={[x2 + 0.3, 7.3 + dy, z2 + 0.6]} color="#17181b" />
+                    <Probe position={[x1, 7.3 + dy, z1]} color="#c8281f" />
+                    <Probe position={[x2 + 0.3, 7.3 + dy, z2 + 0.6]} color="#141518" />
                   </>
                 );
               })()

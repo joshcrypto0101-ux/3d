@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {useMemo} from 'react';
 
-const steel = <meshStandardMaterial color="#d2d6dc" roughness={0.32} metalness={0.8} />;
+const steel = <meshStandardMaterial color="#d2d6dc" roughness={0.22} metalness={1} />;
 
 /**
  * Tweezers. The group origin is the tip. `open` 0 = closed on the part, 1 = fully open.
@@ -59,7 +59,7 @@ export const HotAir: React.FC<{position: [number, number, number]; heat: number}
       {/* heat cone */}
       <mesh position={[0, -2.0, 0]}>
         <coneGeometry args={[2.0, 4.0, 24, 1, true]} />
-        <meshBasicMaterial color="#ff9a3c" transparent opacity={0.04 + heat * 0.1} side={THREE.DoubleSide} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial color="#ff9a3c" transparent opacity={0.008 + heat * 0.02} side={THREE.DoubleSide} depthWrite={false} toneMapped={false} />
       </mesh>
       {heat > 0 ? <pointLight position={[0, 0.6, 0]} intensity={heat * 18} color="#ff8a3c" distance={10} /> : null}
     </group>
@@ -116,7 +116,7 @@ export const Probe: React.FC<{position: [number, number, number]; color: string}
     <group position={position} rotation={[0, 0, -0.75]}>
       <mesh position={[0, 3, 0]} castShadow>
         <cylinderGeometry args={[0.18, 0.05, 6, 10]} />
-        <meshStandardMaterial color="#d2d6dc" roughness={0.32} metalness={0.8} />
+        <meshStandardMaterial color="#d2d6dc" roughness={0.22} metalness={1} />
       </mesh>
       <mesh position={[0, 12, 0]} castShadow>
         <cylinderGeometry args={[0.9, 0.5, 12, 14]} />

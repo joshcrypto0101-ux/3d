@@ -46,11 +46,24 @@ export const useCameraPath = (keys: CamKey[]) => {
   };
 };
 
-export const CameraRig: React.FC<{keys: CamKey[]; fov?: number}> = ({keys, fov = 32}) => {
+const shake = (f: number, k: number) => Math.sin(f * 0.21 * k + 1.3) * 0.5 + Math.sin(f * 0.077 * k + 0.4) * 0.35 + Math.sin(f * 0.013 * k) * 0.15;
+
+export const useCameraFocus = (keys: CamKey[], frame: number) => {
+  const path = useCameraPath(keys);
+  return path(frame).target;
+};
+
+export const CameraRig: React.FC<{keys: CamKey[]; fov?: number; handheld?: number}> = ({keys, fov = 32, handheld = 0.06}) => {
   const frame = useCurrentFrame();
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const path = useCameraPath(keys);
   const {pos, target} = path(frame);
+  // tiny handheld drift so the shot never feels locked off
+  pos.x += shake(frame, 1.0) * handheld;
+  pos.y += shake(frame, 1.37) * handheld * 0.6;
+  pos.z += shake(frame, 0.83) * handheld;
+  target.x += shake(frame, 1.11) * handheld * 0.5;
+  target.z += shake(frame, 0.91) * handheld * 0.5;
   camera.position.copy(pos);
   camera.lookAt(target);
   if (camera.fov !== fov) {

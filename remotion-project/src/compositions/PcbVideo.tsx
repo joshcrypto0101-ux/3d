@@ -9,6 +9,8 @@ import {FOOTPRINTS} from '../scenes/pcb/footprints';
 import {ChapterChip, Counter, EndCard, Multimeter, ScanPanel, SchematicOverlay, SpecCard, Stats, Subtitle, Terminal, Vignette} from '../hud/Hud';
 import {FontGate} from '../hud/FontGate';
 import {LayoutContext} from '../hud/layout';
+import {AssetsProvider} from '../three/Assets';
+import * as THREE from 'three';
 
 export const PcbVideo: React.FC<{data: PcbVideoData; codeLines: string}> = ({data, codeLines}) => {
   const {width, height} = useVideoConfig();
@@ -54,9 +56,18 @@ export const PcbVideo: React.FC<{data: PcbVideoData; codeLines: string}> = ({dat
     <AbsoluteFill style={{background: '#0f1216'}}>
       <LayoutContext.Provider value={{portrait, w: width, h: height}}>
       <FontGate>
-        <ThreeCanvas width={width} height={height} shadows dpr={1} gl={{antialias: true}} camera={{fov: portrait ? 50 : 30, near: 0.5, far: 500, position: [0, 20, 30]}}>
+        <AssetsProvider>
+        <ThreeCanvas
+          width={width}
+          height={height}
+          shadows={{type: THREE.PCFSoftShadowMap}}
+          dpr={1}
+          gl={{antialias: false, toneMapping: THREE.NoToneMapping, outputColorSpace: THREE.SRGBColorSpace}}
+          camera={{fov: portrait ? 50 : 30, near: 2, far: 300, position: [0, 20, 30]}}
+        >
           <PcbScene data={data} tl={tl} fov={portrait ? 50 : 30} />
         </ThreeCanvas>
+        </AssetsProvider>
 
         <Vignette />
         <AbsoluteFill style={{background: '#0f1216', opacity: 0.55 * seg(frame, st.end.start, st.end.start + s(0.6)), pointerEvents: 'none'}} />
