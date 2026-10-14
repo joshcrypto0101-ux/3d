@@ -19,14 +19,27 @@ npm run render:03-shorts   # 同一份数据的 9:16 竖版（1080×1920），Sh
 
 同一个 `PcbVideo` 组件按 `useVideoConfig()` 的宽高判断方向：竖版时 HUD 走 `src/hud/layout.ts` 里的竖屏坐标（顶部和底部留出平台 UI 的安全区，字幕在底部 330 px 以上），3D 相机 fov 从 30 放大到 50。每个题材只需在 `Root.tsx` 多注册一个 1080×1920 的 Composition。
 
+## 写实化（路 A）
+
+- **真实器件**：`public/models/*.glb` 由 KiCad 官方 VRML 库转换（`node tools/wrl2glb.mjs in.wrl out.glb`，0.1 inch → mm，z-up → y-up），运行时按 VRML 漫反射色归类换成我们的 PBR 材质（`src/three/Materials.ts`）。
+- **材质贴图**：`public/textures/` 全部程序生成（玻纤编织法线、阻焊层反照率/粗糙度、ENIG 金划痕、锡膏颗粒法线、木桌面、烟雾精灵）。
+- **光照**：`public/hdr/studio_small_09_1k.hdr`（Poly Haven，CC0）做环境光，另加一盏暖色主光投软阴影。
+- **锡**：`src/scenes/pcb/Solder.tsx`。锡膏是带颗粒法线的圆角块；加热时发橙光、冒烟；熔化后变成高反射的润湿层 + 爬上引脚的凹面填角，插件引脚是车削的弯月面。
+- **后处理**：`src/three/Post.tsx`。景深（焦点跟随摄像机目标）、Bloom、色差、颗粒、暗角、ACES。`REMOTION_POST=off|min|nodof|full` 可切换，排查问题用。
+- **两个 Remotion 专属坑**（都已处理，改代码时注意）：
+  1. 资源必须在 `<ThreeCanvas>` 外面加载完再挂载场景（`AssetsProvider`），因为 @remotion/three 每帧只渲染一次，晚到的资源不会再触发渲染。
+  2. EffectComposer 的 pass 是在 effect 里异步建好的，第一次渲染时还没有；`Post.tsx` 里的 `ComposerKick` 在 pass 列表变化时补渲染一帧，并用 `delayRender` 挂起到就绪。景深的 `worldFocusRange` / `focalLength` 必须保持常量，否则效果会在片中重建。
+
 ## 结构
 
 ```
 data/03-rp114n331.json   一块板 = 一份数据：器件、坐标、贴装顺序、测试点、测试读数、结尾卡
 src/lib/timeline.ts      阶段 / 每个器件的「放置→热风→熔锡」时间槽 / 字幕，全部由数据推导
 src/hud/                 终端打字、章节标签、计数器、用料统计、双语字幕、SCAN 面板、万用表、结尾卡
-src/three/               一镜到底摄像机样条、环境光、Canvas 文字贴图
-src/scenes/pcb/          板子 + 焊盘 + 丝印、封装库、器件模型、镊子 / 热风枪 / 刷子 / 电线 / 表笔、总场景
+src/three/               资源加载、PBR 材质、后处理、一镜到底摄像机样条（含手持抖动）、灯光、Canvas 文字贴图
+src/scenes/pcb/          板子 + 焊盘 + 丝印、封装库、KiCad 器件模型、锡膏/熔锡/烟雾、桌面道具、镊子 / 热风枪 / 刷子 / 电线 / 表笔、总场景
+tools/wrl2glb.mjs        KiCad VRML → glb 转换
+public/models|textures|hdr  模型、贴图、HDRI
 src/compositions/PcbVideo.tsx   把 3D 与 HUD 合成；01–04 四块板共用
 src/Root.tsx             注册 Composition（每块板一个）
 scripts-count-lines.sh   统计代码行数写进 src/code-lines.json，结尾卡显示
