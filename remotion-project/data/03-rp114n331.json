@@ -1,0 +1,32 @@
+{
+  "id": "03-rp114n331",
+  "title": "RP114N331D · 3.3 V LDO",
+  "prompt": "用 RP114N331 做一块 3.3 V LDO 板，1 oz 铜，0603 电容",
+  "schematic": "schematics/03-rp114n331.png",
+  "board": { "w": 20, "h": 15, "t": 1.6, "copperOz": 1, "layers": 2 },
+  "parts": [
+    { "ref": "C1", "value": "1 µF", "footprint": "0603", "kind": "cap0603", "x": -4.2, "y": 2.2, "rot": 90, "note": "输入电容 · X7R 10 V" },
+    { "ref": "U1", "value": "RP114N331D", "footprint": "SOT-23-5", "kind": "sot23-5", "x": 0, "y": 2.2, "rot": 0, "note": "LDO · 3.3 V 固定输出 · 300 mA" },
+    { "ref": "C2", "value": "1 µF", "footprint": "0603", "kind": "cap0603", "x": 4.2, "y": 2.2, "rot": 90, "note": "输出电容 · X7R 10 V" },
+    { "ref": "J1", "value": "VIN / GND", "footprint": "2.54 mm 2P", "kind": "header2", "x": -6.2, "y": -3.8, "rot": 0, "note": "输入 · 接 3.7 V 锂电" },
+    { "ref": "J2", "value": "VOUT / GND", "footprint": "2.54 mm 2P", "kind": "header2", "x": 6.2, "y": -3.8, "rot": 0, "note": "输出 · 3.3 V" }
+  ],
+  "placeOrder": ["C1", "C2", "U1", "J1", "J2"],
+  "testPoints": [
+    { "name": "VIN", "x": -6.2, "y": 0.6 },
+    { "name": "VOUT", "x": 6.2, "y": 0.6 },
+    { "name": "GND", "x": 0, "y": -5.5 }
+  ],
+  "test": { "vin": 3.7, "vout": 3.3, "iout": "300 mA", "source": "3.7 V 锂电池" },
+  "endCard": {
+    "title": "这块板子，用了",
+    "rows": [
+      { "label": "器件", "en": "PARTS", "value": "5", "unit": "个" },
+      { "label": "焊盘", "en": "PADS", "value": "13", "unit": "个" },
+      { "label": "锡膏", "en": "SOLDER PASTE", "value": "0.03", "unit": "g" },
+      { "label": "板子", "en": "BOARD", "value": "20 × 15", "unit": "mm" },
+      { "label": "输出", "en": "OUTPUT", "value": "3.30", "unit": "V · 300 mA" },
+      { "label": "估算成本", "en": "EST. COST", "value": "≈ 4", "unit": "元", "accent": true }
+    ]
+  }
+}
