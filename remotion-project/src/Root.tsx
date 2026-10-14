@@ -19,6 +19,16 @@ export const RemotionRoot: React.FC = () => {
         height={HEIGHT}
         defaultProps={{data: d03, codeLines: codeLines.lines}}
       />
+      {/* 9:16 Shorts / Reels / 抖音 version of the same data */}
+      <Composition
+        id="Pcb03Shorts"
+        component={PcbVideo}
+        durationInFrames={buildTimeline(d03).duration}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{data: d03, codeLines: codeLines.lines}}
+      />
     </>
   );
 };

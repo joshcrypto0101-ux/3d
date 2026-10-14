@@ -8,9 +8,11 @@ import {PcbScene} from '../scenes/pcb/PcbScene';
 import {FOOTPRINTS} from '../scenes/pcb/footprints';
 import {ChapterChip, Counter, EndCard, Multimeter, ScanPanel, SchematicOverlay, SpecCard, Stats, Subtitle, Terminal, Vignette} from '../hud/Hud';
 import {FontGate} from '../hud/FontGate';
+import {LayoutContext} from '../hud/layout';
 
 export const PcbVideo: React.FC<{data: PcbVideoData; codeLines: string}> = ({data, codeLines}) => {
   const {width, height} = useVideoConfig();
+  const portrait = height > width;
   const frame = useCurrentFrame();
   const tl = useMemo(() => buildTimeline(data), [data]);
   const st = tl.stages;
@@ -50,9 +52,10 @@ export const PcbVideo: React.FC<{data: PcbVideoData; codeLines: string}> = ({dat
 
   return (
     <AbsoluteFill style={{background: '#0f1216'}}>
+      <LayoutContext.Provider value={{portrait, w: width, h: height}}>
       <FontGate>
-        <ThreeCanvas width={width} height={height} shadows dpr={1} gl={{antialias: true}} camera={{fov: 30, near: 0.5, far: 500, position: [0, 20, 30]}}>
-          <PcbScene data={data} tl={tl} />
+        <ThreeCanvas width={width} height={height} shadows dpr={1} gl={{antialias: true}} camera={{fov: portrait ? 50 : 30, near: 0.5, far: 500, position: [0, 20, 30]}}>
+          <PcbScene data={data} tl={tl} fov={portrait ? 50 : 30} />
         </ThreeCanvas>
 
         <Vignette />
@@ -113,6 +116,7 @@ export const PcbVideo: React.FC<{data: PcbVideoData; codeLines: string}> = ({dat
 
         <EndCard title={data.endCard.title} rows={data.endCard.rows} prompt={data.prompt} codeLines={codeLines} start={st.end.start + s(0.2)} end={st.end.end} />
       </FontGate>
+      </LayoutContext.Provider>
     </AbsoluteFill>
   );
 };

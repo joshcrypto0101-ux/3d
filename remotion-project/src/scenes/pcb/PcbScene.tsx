@@ -53,7 +53,7 @@ const partState = (part: PartData, slot: PlaceSlot | undefined, frame: number): 
   };
 };
 
-export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline}> = ({data, tl}) => {
+export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline; fov?: number}> = ({data, tl, fov = 30}) => {
   const frame = useCurrentFrame();
   const st = tl.stages;
   const slotsByRef = useMemo(() => Object.fromEntries(tl.slots.map((sl) => [sl.ref, sl])), [tl]);
@@ -136,7 +136,7 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline}> = ({data, tl
       <fog attach="fog" args={['#0f1216', 60, 140]} />
       <Env />
       <Lights warm={heatGlow * 0.6} />
-      <CameraRig keys={keys} fov={30} />
+      <CameraRig keys={keys} fov={fov} />
 
       {/* work mat */}
       <mesh position={[0, -data.board.t - 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -205,7 +205,7 @@ export const PcbScene: React.FC<{data: PcbVideoData; tl: Timeline}> = ({data, tl
             return (
               <mesh key={part.ref} position={[wx + 0.2, PAD_Z + 0.004, wz + 0.15]} rotation={[-Math.PI / 2, 0, 0]}>
                 <circleGeometry args={[rad, 24]} />
-                <meshBasicMaterial color="#6b4a1e" transparent opacity={op} depthWrite={false} />
+                <meshBasicMaterial color="#6b4a1e" transparent opacity={op} depthWrite={false} polygonOffset polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
               </mesh>
             );
           })

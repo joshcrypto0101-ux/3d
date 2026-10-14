@@ -56,8 +56,8 @@ export const CameraRig: React.FC<{keys: CamKey[]; fov?: number}> = ({keys, fov =
   if (camera.fov !== fov) {
     camera.fov = fov;
   }
-  camera.near = 0.5;
-  camera.far = 500;
+  camera.near = 2;
+  camera.far = 300;
   camera.updateProjectionMatrix();
   return null;
 };

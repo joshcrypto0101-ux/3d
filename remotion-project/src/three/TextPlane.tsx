@@ -50,7 +50,7 @@ export const TextPlane: React.FC<{
   return (
     <mesh position={position} rotation={rotation} renderOrder={5}>
       <planeGeometry args={[height * aspect, height]} />
-      <meshBasicMaterial map={texture} transparent opacity={opacity} depthWrite={false} toneMapped={false} />
+      <meshBasicMaterial map={texture} transparent opacity={opacity} depthWrite={false} toneMapped={false} polygonOffset polygonOffsetFactor={-4} polygonOffsetUnits={-4} />
     </mesh>
   );
 };

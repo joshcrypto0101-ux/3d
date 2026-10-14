@@ -66,7 +66,7 @@ export const Board: React.FC<{
       ].map(([x, y], i) => (
         <mesh key={i} position={[x, 0.035, y]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.9, 1.4, 24]} />
-          <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} />
+          <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
         </mesh>
       ))}
       {/* Pads + silkscreen, part by part */}
@@ -84,9 +84,9 @@ export const Board: React.FC<{
               const [px, pz] = toWorld(p.x - part.x, p.y - part.y);
               return p.r ? (
                 <group key={i} position={[px, 0, pz]}>
-                  <mesh position={[0, PAD_Z / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                  <mesh position={[0, PAD_Z + 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                     <ringGeometry args={[0.45, p.r, 28]} />
-                    <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} />
+                    <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
                   </mesh>
                   <mesh position={[0, -t / 2, 0]}>
                     <cylinderGeometry args={[0.45, 0.45, t + 0.1, 20]} />
@@ -96,7 +96,7 @@ export const Board: React.FC<{
               ) : (
                 <mesh key={i} position={[px, PAD_Z / 2, pz]} receiveShadow>
                   <boxGeometry args={[p.w, PAD_Z, p.h]} />
-                  <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} />
+                  <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
                 </mesh>
               );
             })}
@@ -109,7 +109,7 @@ export const Board: React.FC<{
             ].map(([x, z, sx, sz], i) => (
               <mesh key={i} position={[x, 0.04, z]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[sx, sz]} />
-                <meshBasicMaterial color={COLORS.silk} toneMapped={false} />
+                <meshBasicMaterial color={COLORS.silk} toneMapped={false} polygonOffset polygonOffsetFactor={-3} polygonOffsetUnits={-3} />
               </mesh>
             ))}
             <TextPlane text={part.ref} position={[0, 0.045, -cd / 2 - 0.55]} size={0.7} color={COLORS.silk} />
@@ -124,7 +124,7 @@ export const Board: React.FC<{
           <group key={tp.name} position={[x, 0, z]} scale={[sc, 1, sc]}>
             <mesh position={[0, PAD_Z + 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}>
               <circleGeometry args={[0.75, 28]} />
-              <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} />
+              <meshStandardMaterial color={COLORS.pad} roughness={0.35} metalness={0.7} polygonOffset polygonOffsetFactor={-2} polygonOffsetUnits={-2} />
             </mesh>
             <TextPlane text={tp.name} position={[0, 0.045, 1.1]} size={0.6} color={COLORS.silk} />
           </group>

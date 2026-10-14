@@ -9,10 +9,15 @@ cd remotion-project
 npm install
 npm run dev          # Remotion Studio，浏览器里拖时间轴预览
 npm run still:03     # 渲染一张静帧到 out/03-still.png
-npm run render:03    # 渲染成片到 out/03-rp114n331.mp4（1080p30）
+npm run render:03    # 渲染成片到 out/03-rp114n331.mp4（1080p30，16:9）
+npm run render:03-shorts   # 同一份数据的 9:16 竖版（1080×1920），Shorts / Reels / 抖音
 ```
 
 云容器里没有 GPU，`remotion.config.ts` 指向预装的 Chromium headless shell 并用软件 GL（swangle）。本地有 GPU 的机器把 `REMOTION_BROWSER` 指到自己的 Chrome 即可，快一个数量级。
+
+## 横版与竖版
+
+同一个 `PcbVideo` 组件按 `useVideoConfig()` 的宽高判断方向：竖版时 HUD 走 `src/hud/layout.ts` 里的竖屏坐标（顶部和底部留出平台 UI 的安全区，字幕在底部 330 px 以上），3D 相机 fov 从 30 放大到 50。每个题材只需在 `Root.tsx` 多注册一个 1080×1920 的 Composition。
 
 ## 结构
 

@@ -7,6 +7,8 @@
     "dev": "remotion studio",
     "render:03": "remotion render Pcb03 out/03-rp114n331.mp4",
     "still:03": "remotion still Pcb03 out/03-still.png",
+    "render:03-shorts": "remotion render Pcb03Shorts out/03-rp114n331-shorts.mp4",
+    "still:03-shorts": "remotion still Pcb03Shorts out/03-shorts-still.png",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

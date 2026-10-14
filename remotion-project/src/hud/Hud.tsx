@@ -3,6 +3,7 @@ import {T, shadow} from './theme';
 import {easeOut, fadeInOut, seg, lerp, easeInOut} from '../lib/anim';
 import {s} from '../lib/timeline';
 import type {EndCardRow} from '../lib/types';
+import {useP} from './layout';
 
 // ---------------------------------------------------------------------------
 // Small building blocks
@@ -24,8 +25,9 @@ export const Terminal: React.FC<{prompt: string; start: number; end: number}> = 
   if (op <= 0) return null;
   const typed = Math.floor(seg(frame, start + s(0.5), end - s(0.9)) * prompt.length);
   const cursorOn = Math.floor(frame / 8) % 2 === 0;
+  const P = useP();
   return (
-    <div style={{position: 'absolute', left: 120, top: 330, opacity: op, fontFamily: T.mono}}>
+    <div style={{position: 'absolute', left: P(120, 60), top: P(330, 560), right: P(undefined, 60), opacity: op, fontFamily: T.mono}}>
       <div style={{color: T.text, fontSize: 24, marginBottom: 18, textShadow: shadow, letterSpacing: 1}}>
         <span style={{color: T.orange, marginRight: 12}}>✱</span>Claude Code
       </div>
@@ -36,9 +38,9 @@ export const Terminal: React.FC<{prompt: string; start: number; end: number}> = 
           borderRadius: 12,
           padding: '22px 34px',
           fontFamily: T.zh,
-          fontSize: 44,
+          fontSize: P(44, 36),
           color: T.text,
-          minWidth: 760,
+          minWidth: P(760, 0),
           boxShadow: '0 20px 60px rgba(0,0,0,0.45)',
         }}
       >
@@ -56,8 +58,9 @@ export const ChapterChip: React.FC<{num: string; zh: string; en: string; start: 
   const op = fadeInOut(frame, start, end, s(0.3));
   if (op <= 0) return null;
   const slide = (1 - easeOut(seg(frame, start, start + s(0.4)))) * -24;
+  const P = useP();
   return (
-    <div style={{position: 'absolute', left: 64, top: 52, opacity: op, transform: `translateX(${slide}px)`, display: 'flex', alignItems: 'center', gap: 16}}>
+    <div style={{position: 'absolute', left: P(64, 48), top: P(52, 200), opacity: op, transform: `translateX(${slide}px)`, display: 'flex', alignItems: 'center', gap: 16}}>
       <div style={{background: T.orange, color: '#1a1410', fontFamily: T.mono, fontWeight: 700, fontSize: 22, padding: '4px 10px', borderRadius: 4}}>{num}</div>
       <div style={{fontFamily: T.zh, fontWeight: 700, fontSize: 30, color: T.text, textShadow: shadow}}>{zh}</div>
       <div style={{fontFamily: T.mono, fontSize: 16, letterSpacing: 4, color: T.muted, textShadow: shadow, marginTop: 4}}>{en}</div>
@@ -66,8 +69,10 @@ export const ChapterChip: React.FC<{num: string; zh: string; en: string; start: 
 };
 
 /** Top-right big orange counter: 器件 [3] / 5 · 贴装 C1 */
-export const Counter: React.FC<{pre?: string; value: string; post?: string; sub?: string; subEn?: string}> = ({pre, value, post, sub, subEn}) => (
-  <div style={{position: 'absolute', right: 64, top: 48, textAlign: 'right', textShadow: shadow}}>
+export const Counter: React.FC<{pre?: string; value: string; post?: string; sub?: string; subEn?: string}> = ({pre, value, post, sub, subEn}) => {
+  const P = useP();
+  return (
+  <div style={{position: 'absolute', right: P(64, 48), top: P(48, 260), textAlign: 'right', textShadow: shadow}}>
     <div style={{display: 'flex', alignItems: 'baseline', justifyContent: 'flex-end', gap: 10}}>
       {pre ? <span style={{fontFamily: T.zh, fontSize: 28, color: T.text}}>{pre}</span> : null}
       <span style={{fontFamily: T.mono, fontWeight: 700, fontSize: 64, color: T.orange, lineHeight: 1}}>{value}</span>
@@ -76,11 +81,14 @@ export const Counter: React.FC<{pre?: string; value: string; post?: string; sub?
     {sub ? <div style={{fontFamily: T.zh, fontSize: 20, color: T.text, marginTop: 6}}>{sub}</div> : null}
     {subEn ? <div style={{fontFamily: T.mono, fontSize: 13, letterSpacing: 3, color: T.dim, marginTop: 2}}>{subEn}</div> : null}
   </div>
-);
+  );
+};
 
 /** Bottom-left running totals. */
-export const Stats: React.FC<{rows: {zh: string; en: string; value: string; unit: string}[]; opacity?: number}> = ({rows, opacity = 1}) => (
-  <div style={{position: 'absolute', left: 64, bottom: 64, opacity, textShadow: shadow}}>
+export const Stats: React.FC<{rows: {zh: string; en: string; value: string; unit: string}[]; opacity?: number}> = ({rows, opacity = 1}) => {
+  const P = useP();
+  return (
+  <div style={{position: 'absolute', left: P(64, 48), bottom: P(64, 470), opacity, textShadow: shadow}}>
     {rows.map((r) => (
       <div key={r.en} style={{display: 'grid', gridTemplateColumns: '110px auto', alignItems: 'baseline', marginBottom: 10}}>
         <div>
@@ -94,7 +102,8 @@ export const Stats: React.FC<{rows: {zh: string; en: string; value: string; unit
       </div>
     ))}
   </div>
-);
+  );
+};
 
 /** Bottom-centre bilingual subtitle. `**…**` in `zh` is rendered orange. Typewriter reveal. */
 export const Subtitle: React.FC<{zh: string; en: string; start: number; end: number}> = ({zh, en, start, end}) => {
@@ -114,9 +123,10 @@ export const Subtitle: React.FC<{zh: string; en: string; start: number; end: num
     hl = !hl;
   }
   const enOp = seg(frame, start + s(0.35), start + s(0.7));
+  const P = useP();
   return (
-    <div style={{position: 'absolute', left: 0, right: 0, bottom: 86, textAlign: 'center', opacity: op, textShadow: shadow}}>
-      <div style={{fontFamily: T.zh, fontWeight: 500, fontSize: 42, color: T.text, letterSpacing: 1}}>
+    <div style={{position: 'absolute', left: P(0, 40), right: P(0, 40), bottom: P(86, 330), textAlign: 'center', opacity: op, textShadow: shadow}}>
+      <div style={{fontFamily: T.zh, fontWeight: 500, fontSize: P(42, 46), color: T.text, letterSpacing: 1, lineHeight: 1.35}}>
         {parts.map((p, i) => (
           <span key={i} style={{color: p.hl ? T.orange : T.text}}>
             {p.text}
@@ -129,12 +139,13 @@ export const Subtitle: React.FC<{zh: string; en: string; start: number; end: num
 };
 
 /** Fake "processing" panel, e.g. SCAN 原理图识别 / NETS 6 / PARTS 5 */
-export const ScanPanel: React.FC<{title: string; titleEn: string; rows: [string, string][]; start: number; end: number; left?: number; top?: number}> = ({title, titleEn, rows, start, end, left = 64, top = 140}) => {
+export const ScanPanel: React.FC<{title: string; titleEn: string; rows: [string, string][]; start: number; end: number; left?: number; top?: number}> = ({title, titleEn, rows, start, end, left, top}) => {
   const frame = useCurrentFrame();
+  const P = useP();
   const op = fadeInOut(frame, start, end, s(0.25));
   if (op <= 0) return null;
   return (
-    <div style={{position: 'absolute', left, top, opacity: op, background: T.panel, borderRadius: 8, padding: '16px 22px', minWidth: 330, fontFamily: T.mono, backdropFilter: 'blur(6px)'}}>
+    <div style={{position: 'absolute', left: left ?? P(64, 48), top: top ?? P(140, 1120), opacity: op, background: T.panel, borderRadius: 8, padding: '16px 22px', minWidth: 330, fontFamily: T.mono, backdropFilter: 'blur(6px)'}}>
       <div style={{display: 'flex', gap: 14, alignItems: 'baseline', marginBottom: 10}}>
         <span style={{color: T.orange, fontWeight: 700, fontSize: 16, letterSpacing: 3}}>{titleEn}</span>
         <span style={{color: T.text, fontFamily: T.zh, fontSize: 18}}>{title}</span>
@@ -180,10 +191,11 @@ export const SchematicOverlay: React.FC<{src: string; start: number; end: number
   const frame = useCurrentFrame();
   const op = fadeInOut(frame, start, end, s(0.3));
   if (op <= 0) return null;
-  const x = 560;
-  const y = 160;
-  const w = 1000;
-  const h = 640;
+  const P = useP();
+  const x = P(560, 70);
+  const y = P(160, 330);
+  const w = P(1000, 940);
+  const h = P(640, 600);
   const wipe = easeInOut(seg(frame, start + s(0.2), start + s(1.5)));
   const paperTilt = lerp(-2.5, 0, easeOut(seg(frame, start, start + s(1.2))));
   return (
@@ -194,7 +206,7 @@ export const SchematicOverlay: React.FC<{src: string; start: number; end: number
       </div>
       <ScanFrame x={x - 18} y={y - 18} w={w + 36} h={h + 36} start={start} end={end} />
       {/* part callouts */}
-      <div style={{position: 'absolute', left: x + w + 50, top: y + 40, fontFamily: T.mono}}>
+      <div style={{position: 'absolute', left: P(x + w + 50, x + 10), top: P(y + 40, y + h + 60), fontFamily: T.mono, display: 'flex', flexDirection: P('column', 'row') as 'column' | 'row', flexWrap: 'wrap', gap: P(0, 18)}}>
         {parts.map((p, i) => {
           const show = easeOut(seg(frame, start + s(1.6 + i * 0.18), start + s(1.9 + i * 0.18)));
           return (
@@ -214,8 +226,9 @@ export const SpecCard: React.FC<{rows: [string, string][]; start: number; end: n
   const frame = useCurrentFrame();
   const op = fadeInOut(frame, start, end, s(0.25));
   if (op <= 0) return null;
+  const P = useP();
   return (
-    <div style={{position: 'absolute', right: 64, top: 160, opacity: op, fontFamily: T.mono, textAlign: 'right'}}>
+    <div style={{position: 'absolute', right: P(64, 48), top: P(160, 400), opacity: op, fontFamily: T.mono, textAlign: 'right'}}>
       {rows.map(([k, v], i) => {
         const show = seg(frame, start + s(0.2 + i * 0.15), start + s(0.4 + i * 0.15));
         return (
@@ -234,8 +247,9 @@ export const Multimeter: React.FC<{label: string; value: number; unit: string; s
   const frame = useCurrentFrame();
   const op = fadeInOut(frame, start, end, s(0.25));
   if (op <= 0) return null;
+  const P = useP();
   return (
-    <div style={{position: 'absolute', right: 64, top, opacity: op, background: T.panel, borderRadius: 10, padding: '14px 22px', minWidth: 300, fontFamily: T.mono, backdropFilter: 'blur(6px)'}}>
+    <div style={{position: 'absolute', right: P(64, 48), top: P(top, top + 220), opacity: op, background: T.panel, borderRadius: 10, padding: '14px 22px', minWidth: 300, fontFamily: T.mono, backdropFilter: 'blur(6px)'}}>
       <div style={{color: T.dim, fontSize: 12, letterSpacing: 4, marginBottom: 4}}>{label}</div>
       <div style={{display: 'flex', alignItems: 'baseline', gap: 10, justifyContent: 'flex-end'}}>
         <span style={{fontSize: 58, fontWeight: 700, color: '#d8f6ff', letterSpacing: 2, textShadow: '0 0 14px rgba(110,198,230,0.55)'}}>{value.toFixed(2)}</span>
@@ -250,8 +264,9 @@ export const EndCard: React.FC<{title: string; rows: EndCardRow[]; prompt: strin
   const frame = useCurrentFrame();
   const op = fadeInOut(frame, start, end, s(0.4));
   if (op <= 0) return null;
+  const P = useP();
   return (
-    <div style={{position: 'absolute', left: 120, top: 150, opacity: op, textShadow: shadow}}>
+    <div style={{position: 'absolute', left: P(120, 72), top: P(150, 380), opacity: op, textShadow: shadow}}>
       <div style={{borderLeft: `4px solid ${T.orange}`, paddingLeft: 22, fontFamily: T.zh, fontWeight: 700, fontSize: 40, color: T.text, marginBottom: 30}}>{title}</div>
       {rows.map((r, i) => {
         const show = easeOut(seg(frame, start + s(0.3 + i * 0.16), start + s(0.6 + i * 0.16)));
@@ -268,7 +283,7 @@ export const EndCard: React.FC<{title: string; rows: EndCardRow[]; prompt: strin
           </div>
         );
       })}
-      <div style={{marginTop: 28, paddingTop: 18, borderTop: '1px solid rgba(243,241,236,0.18)', width: 760, opacity: seg(frame, start + s(1.6), start + s(2.0))}}>
+      <div style={{marginTop: 28, paddingTop: 18, borderTop: '1px solid rgba(243,241,236,0.18)', width: P(760, 930), opacity: seg(frame, start + s(1.6), start + s(2.0))}}>
         <div style={{fontFamily: T.zh, fontSize: 22, color: T.muted}}>
           本片每一帧都是代码渲染 · <span style={{color: T.orange, fontFamily: T.mono, fontWeight: 700}}>{codeLines}</span> 行
         </div>
