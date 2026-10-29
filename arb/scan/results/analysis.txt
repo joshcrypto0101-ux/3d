@@ -1,0 +1,111 @@
+=== venue quality (median) ===
+                  samples  own_spread_bp  top_bid  top_ask     bid5      ask5
+coin ex                                                                      
+BTC  aster            517          0.013    0.626    0.533    2.946     2.495
+     bingx            517          0.038   29.280    0.076   34.874     1.728
+     bitget           517          0.013    7.423    6.307    7.728     6.462
+     gate             517          0.013    3.647    4.141    3.943     4.259
+     htx              517          0.013    1.511    0.531    3.520     1.682
+     hyperliquid      517          0.125    9.532    2.366   14.206     5.136
+     kucoin           517          0.013    1.469    0.339    2.609     0.471
+     mexc             517          0.013    7.418    4.465   17.927    23.413
+     okx              517          0.013   10.344    7.815   10.735     8.267
+     phemex           516          0.013    1.844    0.330    3.218     1.380
+     whitebit         517          0.013    0.014    0.014    0.393     0.019
+ETH  aster            517          0.043   10.064   10.924   76.288   143.265
+     bingx            517          0.087  589.850    1.780  804.270   202.700
+     bitget           517          0.043   73.860   61.690  100.200    79.130
+     gate             517          0.043   83.200   81.260   95.650    93.750
+     htx              517          0.043  102.290   46.870  128.840    64.790
+     hyperliquid      517          0.432  126.409  161.632  561.301  1039.219
+     kucoin           517          0.043    5.590    1.930   16.130     7.900
+     mexc             517          0.043  399.730  348.570  486.130   385.240
+     okx              517          0.043  234.565  227.210  262.075   265.917
+     phemex           517          0.043   16.750    8.220   63.630    39.870
+     whitebit         517          0.043    0.230   11.070    0.630    55.540
+
+=== BTC: best one-way effective spreads (sell A, buy B), bp ===
+coin       sellA        buyB   n  basis_mean  basis_std  eff_mean  eff_p50  eff_p90  eff_p99  eff_max  pct>2  pct>3  pct>5  pct>8  pct>10  pct>15
+ BTC         htx        mexc 509        3.10       0.87      3.02     3.04     4.35     5.00     5.02  80.16  51.28   0.59    0.0     0.0     0.0
+ BTC         htx         okx 507        2.80       1.07      2.73     2.62     4.34     4.82     5.15  69.03  41.22   0.79    0.0     0.0     0.0
+ BTC         htx       bingx 508        2.85       0.96      2.77     2.74     4.22     4.66     4.95  74.02  41.73   0.00    0.0     0.0     0.0
+ BTC         htx       aster 510        2.82       0.93      2.74     2.74     4.01     4.67     4.91  71.57  37.06   0.00    0.0     0.0     0.0
+ BTC         htx        gate 512        2.46       0.95      2.39     2.29     3.73     4.17     5.10  61.91  33.20   0.39    0.0     0.0     0.0
+ BTC         htx      phemex 508        2.43       0.74      2.35     2.26     3.38     3.79     4.13  63.78  25.98   0.00    0.0     0.0     0.0
+ BTC         htx    whitebit 507        2.17       0.96      2.10     2.05     3.37     4.22     4.22  54.24  23.87   0.00    0.0     0.0     0.0
+ BTC         htx      bitget 510        1.42       1.06      1.34     1.34     2.77     3.64     3.64  33.73   6.08   0.00    0.0     0.0     0.0
+ BTC         htx      kucoin 509        1.53       0.88      1.46     1.44     2.63     3.63     3.63  29.67   2.75   0.00    0.0     0.0     0.0
+ BTC      bitget        mexc 506        1.67       0.63      1.65     1.59     2.50     3.32     3.60  25.10   3.36   0.00    0.0     0.0     0.0
+ BTC hyperliquid         okx 507        1.32       0.69      1.25     1.11     2.46     2.50     3.49  15.58   0.39   0.00    0.0     0.0     0.0
+ BTC      kucoin        mexc 509        1.56       0.70      1.54     1.38     2.45     3.46     4.99  23.18   3.14   0.00    0.0     0.0     0.0
+ BTC      kucoin       aster 510        1.28       0.71      1.27     1.20     2.40     3.07     4.18  16.67   1.37   0.00    0.0     0.0     0.0
+ BTC         htx hyperliquid 509        1.49       0.74      1.36     1.39     2.36     3.42     3.67  13.16   4.91   0.00    0.0     0.0     0.0
+ BTC      kucoin         okx 511        1.26       0.80      1.25     1.21     2.26     3.16     3.67  20.16   3.91   0.00    0.0     0.0     0.0
+
+=== ETH: best one-way effective spreads (sell A, buy B), bp ===
+coin    sellA        buyB   n  basis_mean  basis_std  eff_mean  eff_p50  eff_p90  eff_p99  eff_max  pct>2  pct>3  pct>5  pct>8  pct>10  pct>15
+ ETH      htx hyperliquid 507       12.36       0.83     12.12    12.16    13.17    13.82    14.24 100.00 100.00 100.00 100.00   99.41     0.0
+ ETH      htx        gate 514       11.55       1.06     11.51    11.49    12.96    13.86    14.20 100.00 100.00 100.00  99.81   92.41     0.0
+ ETH      htx      kucoin 509       11.60       0.95     11.56    11.61    12.83    13.76    14.32 100.00 100.00 100.00 100.00   95.09     0.0
+ ETH      htx       bingx 510       11.43       0.91     11.35    11.34    12.59    13.44    13.76 100.00 100.00 100.00 100.00   94.90     0.0
+ ETH      htx         okx 507       11.39       0.93     11.35    11.22    12.56    13.32    13.50 100.00 100.00 100.00 100.00   92.70     0.0
+ ETH      htx      bitget 510       11.25       0.98     11.20    11.18    12.52    13.25    13.59 100.00 100.00 100.00 100.00   89.61     0.0
+ ETH      htx        mexc 512       11.31       0.97     11.26    11.27    12.46    13.65    13.89 100.00 100.00 100.00 100.00   92.19     0.0
+ ETH      htx       aster 512       11.10       0.87     11.06    10.93    12.29    13.48    13.71 100.00 100.00 100.00 100.00   90.62     0.0
+ ETH      htx      phemex 511       10.79       0.89     10.74    10.71    11.90    12.51    13.41 100.00 100.00 100.00 100.00   79.26     0.0
+ ETH      htx    whitebit 507        9.37       0.91      9.32     9.35    10.56    11.54    11.73 100.00 100.00 100.00  91.91   20.51     0.0
+ ETH whitebit hyperliquid 509        2.99       0.81      2.75     2.73     3.67     4.86     5.53  84.09  30.45   0.79   0.00    0.00     0.0
+ ETH whitebit      kucoin 511        2.22       0.79      2.18     2.16     3.25     3.76     5.37  58.90  16.05   0.39   0.00    0.00     0.0
+ ETH whitebit        gate 508        2.17       0.77      2.13     2.25     2.98     3.75     4.76  60.24   9.25   0.00   0.00    0.00     0.0
+ ETH whitebit         okx 511        2.01       0.60      1.97     1.99     2.64     3.50     4.07  45.40   3.33   0.00   0.00    0.00     0.0
+ ETH whitebit       bingx 508        2.04       0.53      1.97     2.03     2.64     3.11     4.33  51.18   1.97   0.00   0.00    0.00     0.0
+
+=== round-trip simulation per pair: enter if sell-A/buy-B eff spread > IN bp, close when reverse eff spread > OUT bp ===
+
+--- BTC ---
+coin           A           B  IN  OUT  trips  trips_per_day  gross_bp_total  gross_bp_per_trip  median_hold_s
+ BTC        gate         htx   3   -1      4         384.43           10.06               2.51           39.5
+ BTC      kucoin        mexc   3   -1      3         288.32            8.02               2.67           48.0
+ BTC        gate        mexc   3   -1      2         192.21            7.43               3.71            1.5
+ BTC       aster      kucoin   3   -1      3         288.32            7.38               2.46           29.0
+ BTC      bitget      phemex   3   -1      2         192.21            6.99               3.49            3.5
+ BTC      kucoin    whitebit   3   -1      2         192.21            6.70               3.35           14.0
+ BTC         htx    whitebit   3   -1      3         288.32            6.59               2.20           99.0
+ BTC       aster      bitget   3   -1      2         192.21            6.50               3.25           32.0
+ BTC      kucoin         okx   3   -1      2         192.21            5.67               2.83           30.5
+ BTC hyperliquid        mexc   3   -1      2         192.21            5.59               2.80           41.5
+ BTC hyperliquid         okx   3   -1      2         192.21            5.28               2.64           30.0
+ BTC      bitget        mexc   3   -1      2         192.21            5.04               2.52           18.0
+ BTC       bingx      kucoin   3   -1      2         192.21            4.87               2.43           33.5
+ BTC      bitget      kucoin   3   -1      2         192.21            4.79               2.39            8.0
+ BTC       bingx        gate   3   -1      1          96.11            4.45               4.45            1.0
+ BTC        gate hyperliquid   3   -1      2         192.21            4.39               2.20           19.5
+ BTC        gate    whitebit   3   -1      1          96.11            4.31               4.31            1.0
+ BTC         htx         okx   5   -1      1          96.11            4.16               4.16          320.0
+ BTC        mexc      phemex   3   -1      1          96.11            4.11               4.11            1.0
+ BTC        gate         htx   5   -1      1          96.11            4.11               4.11           33.0
+
+--- ETH ---
+coin           A           B  IN  OUT  trips  trips_per_day  gross_bp_total  gross_bp_per_trip  median_hold_s
+ ETH        gate    whitebit   3   -1      6         576.64           19.88               3.31           15.0
+ ETH      kucoin    whitebit   3   -1      4         384.43           11.59               2.90           80.0
+ ETH      bitget hyperliquid   3   -1      4         384.43           11.32               2.83            7.5
+ ETH       aster    whitebit   3   -1      4         384.43           11.20               2.80           22.0
+ ETH        gate hyperliquid   3   -1      3         288.32           10.89               3.63            4.0
+ ETH         okx    whitebit   3   -1      4         384.43           10.63               2.66           78.0
+ ETH      phemex    whitebit   3   -1      3         288.32            9.82               3.27            9.0
+ ETH      kucoin    whitebit   5   -1      2         192.21            8.86               4.43           73.5
+ ETH      kucoin      phemex   3   -1      3         288.32            8.60               2.87            4.0
+ ETH      bitget        gate   3   -1      2         192.21            7.56               3.78            1.0
+ ETH       aster hyperliquid   3   -1      3         288.32            7.56               2.52            9.0
+ ETH hyperliquid    whitebit   5   -1      1          96.11            5.67               5.67          247.0
+ ETH        gate hyperliquid   5   -1      1          96.11            5.58               5.58            1.0
+ ETH hyperliquid        mexc   3   -1      2         192.21            5.35               2.68           17.0
+ ETH        gate         okx   3   -1      1          96.11            5.27               5.27            1.0
+ ETH       bingx        gate   3   -1      1          96.11            5.10               5.10            1.0
+ ETH       bingx        gate   5   -1      1          96.11            5.10               5.10            1.0
+ ETH hyperliquid      kucoin   3   -1      2         192.21            4.97               2.48           17.5
+ ETH        gate        mexc   3   -1      1          96.11            4.88               4.88            1.0
+ ETH      bitget    whitebit   3   -1      2         192.21            4.88               2.44          118.0
+
+sample window minutes: 15.0

@@ -1,0 +1,39 @@
+# 跨所永续中性套利 (taker-only) 配置
+# A = 流动性好的锚定所, B = 流动性差 / 价差大的所
+symbol: BTC/USDT:USDT
+venues:
+  A:
+    id: okx            # ccxt 交易所 id
+    taker_fee_bp: 0.5  # 90% 返佣后的实际 taker 费率 (bp)。OKX 普通 0.05% = 5bp，返佣 90% 后 0.5bp
+    apiKey: ${OKX_KEY}
+    secret: ${OKX_SECRET}
+    password: ${OKX_PASSPHRASE}
+  B:
+    id: htx
+    taker_fee_bp: 0.5
+    apiKey: ${HTX_KEY}
+    secret: ${HTX_SECRET}
+
+sizing:
+  clip: 0.02           # 每次下单数量 (币)，必须小于两边盘口 5 档深度的 1/5
+  max_position: 0.10   # 单边最大持仓 (币)；中性结构下 A 多 B 空 或 A 空 B 多
+  max_leverage: 3      # 任一边名义/保证金 超过即停止开新仓
+
+signal:
+  slippage_bp: 0.3     # 预留滑点 (单腿)
+  min_edge_bp: 1.5     # 扣完 4 腿费用 + 滑点后还要剩下的净利 (整个来回)
+  z_window_s: 1800     # 基差 z-score 的滚动窗口 (秒)
+  z_entry: 2.0         # |z| 超过才允许开仓 (防止在结构性基差上单边越开越多)
+  z_exit: 0.3          # z 回到 0 附近且反向价差满足条件时平仓
+  stale_ms: 1500       # 任一边盘口超过此时间没更新 → 不交易
+
+risk:
+  max_net_delta: 0.01  # 两边净敞口超过 clip 的一半 → 进入对冲模式
+  leg_retry: 3         # 单腿失败重试次数
+  daily_loss_limit_usdt: 150
+  margin_ratio_floor: 0.35  # 任一边 可用保证金/总保证金 低于此 → 只平不开
+  funding_guard_min: 3      # 费率结算前 N 分钟，若持仓方向要付费率且费率差 > 阈值则提前平仓
+  funding_guard_bp: 1.0
+
+mode: paper            # paper | live
+log_dir: ./logs

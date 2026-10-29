@@ -1,0 +1,104 @@
+{
+ "BTC": {
+  "okx": [
+   3.84248284438e-05,
+   8
+  ],
+  "bitget": [
+   9.2e-05,
+   8
+  ],
+  "gate": [
+   8e-05,
+   8
+  ],
+  "kucoin": [
+   0.0001,
+   8
+  ],
+  "mexc": [
+   6e-06,
+   8
+  ],
+  "htx": [
+   0.0001,
+   8
+  ],
+  "bingx": [
+   9e-05,
+   8
+  ],
+  "hyperliquid": [
+   1.25e-05,
+   1
+  ],
+  "phemex": [
+   4.149e-05,
+   8
+  ],
+  "aster": [
+   3.933e-05,
+   8
+  ],
+  "backpack": [
+   1.25e-05,
+   8
+  ],
+  "paradex": [
+   8.125264421e-05,
+   8
+  ],
+  "bybit": "Expecting property name enclosed in doub"
+ },
+ "ETH": {
+  "okx": [
+   4.04513588081e-05,
+   8
+  ],
+  "bitget": [
+   5.4e-05,
+   8
+  ],
+  "gate": [
+   4.3e-05,
+   8
+  ],
+  "kucoin": [
+   -1.4e-05,
+   8
+  ],
+  "mexc": [
+   1.9e-05,
+   8
+  ],
+  "htx": [
+   0.0001,
+   8
+  ],
+  "bingx": [
+   5.4e-05,
+   8
+  ],
+  "hyperliquid": [
+   -2.7676e-06,
+   1
+  ],
+  "phemex": [
+   1.608e-05,
+   8
+  ],
+  "aster": [
+   7.91e-05,
+   8
+  ],
+  "backpack": [
+   1.25e-05,
+   8
+  ],
+  "paradex": [
+   5.861625335e-05,
+   8
+  ],
+  "bybit": "Expecting property name enclosed in doub"
+ }
+}
